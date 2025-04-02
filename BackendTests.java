@@ -1,0 +1,104 @@
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+/**
+ * Tests for the Backend implementation of BackendInterface using standalone tests and graph_placholder implementation
+ */
+public class BackendTests {
+
+    /**
+     * this method tests loading of graph data and retrieving the list
+     * of all locations in the graph. Methods included are loadGraphData and getListOfAllLocations
+     */
+    @Test
+    public void roleTest1() throws IOException {
+	// create placeholder graph and backend
+	GraphADT<String, Double> placeholderGraph = new Graph_Placeholder();
+	Backend backend = new Backend(placeholderGraph);
+
+	// load the graph data from campus.dot
+	backend.loadGraphData("campus.dot");
+
+	// get the list of all locations
+	List<String> locations = backend.getListOfAllLocations();
+
+	// check locations is not null or empty
+	assertNotNull(locations, "The list of locations should not be null");
+	assertTrue(locations.size() > 0, "The list of locations is empty");
+
+	// check for locations loaded into graph
+	assertTrue(locations.contains("Union South"), "The list des not contain Union South");
+	assertTrue(locations.contains("Computer Sciences and Statistics"), "The list does not contain Computer Sciences and Statistics");
+    }
+
+    /**
+     * This method tests finding locations and times on the shortest path
+     * between two locations. Methods included are findLocationOnShortestPath and findTimesonShortestPath
+     */
+    @Test
+    public void roleTest2() {
+	// create placeholder graph and backend
+	GraphADT<String, Double> placeholderGraph = new Graph_Placeholder();
+	Backend backend = new Backend(placeholderGraph);
+
+	// call find location on shortest path between two locations
+	List<String> path = backend.findLocationsOnShortestPath("Union South",
+								"Weeks Hall for Geological Sciences");
+
+	// check path being null or empty
+	assertNotNull(path, "The path is null");
+	assertTrue(path.size() > 0, "The path is empty");
+	assertEquals("Union South", path.get(0), "The first location was not Union South");
+
+	// checking the placeholder
+	if (path.size() >= 3) {
+	    assertEquals("Computer Sciences and Statistics", path.get(1), "The second location was not Computer Sciences and Statistics");
+	    assertEquals("Weeks Hall for Geological Sciences", path.get(2), "The third location was not Weeks Hall for Geological Sciences");
+	}
+
+	// call find times on shortest path
+	List<Double> times = backend.findTimesOnShortestPath("Union South", "Weeks Hall for Geological Sciences");
+
+	// check list is not null
+	assertNotNull(times, "The times list should not be null");
+
+	// check placeholder (# of times should be locatsion - 1)
+	assertEquals(path.size() - 1, times.size(), "There should be n-1 times for n locations");
+
+	// ensure all times are positive
+        for (int i = 0; i < times.size(); i++) {
+	    Double time = times.get(i);
+	    assertTrue(time > 0, "A walking time was negative");
+	}
+    }
+
+    /**
+     * This method tests the furthest desitnation from a given location. Methods included are getFurthestDesintationFrom()
+     * Also checks error handling for fraud locations.
+     */
+    @Test
+    public void roleTest3() {
+	// create placeholder graph and backend
+	GraphADT<String, Double> placeholderGraph = new Graph_Placeholder();
+	Backend backend = new Backend(placeholderGraph);
+
+	// call getFurthestDestination from a placeholder location
+	String furthestLocation = backend.getFurthestDestinationFrom("Union South");
+
+	// ensure location is not null
+	assertNotNull(furthestLocation, "A furthest location should be returned");
+
+	// the placeholder check should have Weeks Hall for Geological Sciences as furthestLocation
+	assertEquals("Weeks Hall for Geological Sciences", furthestLocation,
+		     "The furthest location was not Weeks Hall for Geological Sciences");
+
+	// test a non-existent location
+	assertThrows(NoSuchElementException.class, () -> {
+		backend.getFurthestDestinationFrom("Rovera Appreciation Building");
+	    }, "NoSuchElementException was not thrown for phony location");
+    }
+
+}
