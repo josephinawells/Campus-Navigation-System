@@ -1,16 +1,18 @@
 // === CS400 File Header Information ===
-// Name: <your full name>
-// Email: <your @wisc.edu email address>
+// Name: Josey Wells
+// Email: jmwells5 @wisc.edu 
 // Group and Team: <your group name: two letters, and team color>
 // Group TA: <name of your group's ta>
 // Lecturer: <name of your lecturer>
 // Notes to Grader: <optional extra notes>
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import java.util.PriorityQueue;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
-
+import java.util.ArrayList;
 /**
  * This class extends the BaseGraph data structure with additional methods for
  * computing the total cost and list of node data along the shortest path
@@ -113,4 +115,162 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
     }
 
     // TODO: implement 3+ tests in step 4.1
+
+    //Tests that the graph prints the correct things
+    @Test
+    public void testGraphResults(){
+	DijkstraGraph<String, Integer> graph = new DijkstraGraph<String,Integer>();
+
+	//adds the nodes
+	graph.insertNode("D");
+	graph.insertNode("G");
+	graph.insertNode("F");
+	graph.insertNode("A");
+	graph.insertNode("B");
+	graph.insertNode("L");
+	graph.insertNode("H");
+	graph.insertNode("M");
+	graph.insertNode("I");
+	graph.insertNode("E");
+
+	//add edges
+        graph.insertEdge("D", "G", 2);
+        graph.insertEdge("D", "F", 4);
+        graph.insertEdge("D", "A", 7);
+        graph.insertEdge("G", "A", 4);
+        graph.insertEdge("G", "L", 7);
+        graph.insertEdge("G", "H", 9);
+        graph.insertEdge("F", "G", 9);
+        graph.insertEdge("A", "B", 1);
+        graph.insertEdge("A", "H", 7);
+        graph.insertEdge("A", "M", 5);
+        graph.insertEdge("B", "M", 3);
+        graph.insertEdge("H", "I", 2);
+        graph.insertEdge("H", "L", 2);
+        graph.insertEdge("M", "I", 4);
+        graph.insertEdge("M", "E", 3);
+        graph.insertEdge("M", "F", 4);
+        graph.insertEdge("I", "H", 2);
+        graph.insertEdge("I", "D", 1);
+
+
+	//creates list of expected and actual values
+	List<String> paths = graph.shortestPathData("D", "I");
+	List<String> expected = new ArrayList<>();
+
+	expected.add("F");
+        expected.add("G");
+        expected.add("A");
+        expected.add("B");
+        expected.add("M");
+        expected.add("I");
+
+	Assertions.assertEquals(expected,paths);
+	Assertions.assertEquals(14, graph.shortestPathCost("D", "I"));
+    }
+
+    //tests the different costs and paths
+    @Test
+    public void testGraphDifferentResults(){
+	 DijkstraGraph<String, Integer> graph = new DijkstraGraph<String,Integer>();
+
+        //adds the nodes                                                                                     
+        graph.insertNode("D");
+        graph.insertNode("G");
+        graph.insertNode("F");
+        graph.insertNode("A");
+        graph.insertNode("B");
+        graph.insertNode("L");
+        graph.insertNode("H");
+        graph.insertNode("M");
+        graph.insertNode("I");
+        graph.insertNode("E");
+
+	 //add edges                                                                                          
+        graph.insertEdge("D", "G", 2);
+        graph.insertEdge("D", "F", 4);
+        graph.insertEdge("D", "A", 7);
+        graph.insertEdge("G", "A", 4);
+        graph.insertEdge("G", "L", 7);
+        graph.insertEdge("G", "H", 9);
+        graph.insertEdge("F", "G", 9);
+        graph.insertEdge("A", "B", 1);
+        graph.insertEdge("A", "H", 7);
+        graph.insertEdge("A", "M", 5);
+        graph.insertEdge("B", "M", 3);
+        graph.insertEdge("H", "I", 2);
+        graph.insertEdge("H", "L", 2);
+        graph.insertEdge("M", "I", 4);
+        graph.insertEdge("M", "E", 3);
+        graph.insertEdge("M", "F", 4);
+        graph.insertEdge("I", "H", 2);
+        graph.insertEdge("I", "D", 1);
+
+	//creates list of expected and actual
+	List<String> paths = graph.shortestPathData("F", "E");
+	List<String> expected = new ArrayList<>();
+
+	expected.add("F");
+	expected.add("G");
+	expected.add("A");
+        expected.add("B");
+        expected.add("M");
+        expected.add("I");
+
+        Assertions.assertEquals(expected,paths);
+        Assertions.assertEquals(20, graph.shortestPathCost("F", "E"));
+    }
+
+    //tests when there is no path
+    @Test
+    public void testsNoPath(){
+	 DijkstraGraph<String, Integer> graph = new DijkstraGraph<String,Integer>();
+
+        //adds the nodes                                                                                    
+                                                                                                            
+        graph.insertNode("D");
+        graph.insertNode("G");
+        graph.insertNode("F");
+        graph.insertNode("A");
+        graph.insertNode("B");
+        graph.insertNode("L");
+        graph.insertNode("H");
+        graph.insertNode("M");
+        graph.insertNode("I");
+        graph.insertNode("E");
+
+	   //add edges                                                                                
+                                                                                                       
+        graph.insertEdge("D", "G", 2);
+        graph.insertEdge("D", "F", 4);
+        graph.insertEdge("D", "A", 7);
+        graph.insertEdge("G", "A", 4);
+        graph.insertEdge("G", "L", 7);
+        graph.insertEdge("G", "H", 9);
+        graph.insertEdge("F", "G", 9);
+        graph.insertEdge("A", "B", 1);
+        graph.insertEdge("A", "H", 7);
+        graph.insertEdge("A", "M", 5);
+        graph.insertEdge("B", "M", 3);
+        graph.insertEdge("H", "I", 2);
+        graph.insertEdge("H", "L", 2);
+        graph.insertEdge("M", "I", 4);
+        //dont include to edge to node e
+        graph.insertEdge("M", "F", 4);
+        graph.insertEdge("I", "H", 2);
+        graph.insertEdge("I", "D", 1);
+
+	//create the list of the path
+
+	List<String> paths = graph.shortestPathData("D", "E");
+	Assertions.assertTrue(paths.isEmpty());
+
+	try{
+	    graph.shortestPathCost("D","E");
+	    //false if exception is not thrown
+	    Assertions.assertTrue(false);
+	}catch(NoSuchElementException e){
+	    Assertions.assertTrue(true);
+	}
+    }
 }
