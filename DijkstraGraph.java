@@ -3,7 +3,7 @@
 // Email: jmwells5 @wisc.edu 
 // Group and Team: <your group name: two letters, and team color>
 // Group TA: <name of your group's ta>
-// Lecturer: <name of your lecturer>
+// Lecturer: Gary Dahl
 // Notes to Grader: <optional extra notes>
 
 import org.junit.jupiter.api.Test;
@@ -78,8 +78,47 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
      *                                correspond to a graph node
      */
     protected SearchNode computeShortestPath(NodeType start, NodeType end) {
-        // implement in step 5.3
-        return null;
+	//checks that the start and end nodes exist and if they dont exception is thrown
+        if(this.containsNode(start) == false || this.containsNode(end) == false){
+	    throw new NoSuchElementException("Start or End no was not found");
+	}
+	PriorityQueue<SearchNode> queue = new PriorityQueue<>();
+	PlaceholderMap<Node, Node> seen = new PlaceholderMap<>();
+
+	Node startingNode = this.nodes.get(start);
+	Node endingNode = this.nodes.get(end);
+
+	//searches the nodes with a cost of 0 and no predecessor
+	queue.add(new SearchNode(startingNode, 0.0, null));
+
+	while(queue.isEmpty() == false){
+	    //finds the node with the lowest cost
+	    SearchNode on = queue.remove();
+
+	    if(seen.containsKey(on.node)){
+		continue;
+	    }
+	    //gets marked as a visited node
+	    seen.put(on.node, on.node);
+
+	    if(on.node == endingNode){
+		return on;
+	    }
+	    //searches through the edges 
+	    for(Edge edge : on.node.edgesLeaving){
+		Node successor = edge.successor;
+		//only goes to the unvistster successors
+		if(seen.containsKey(successor) == false){
+		    double cost = on.cost + edge.data.doubleValue();
+		    //adds to the priority queue
+		    queue.add(new SearchNode(successor, cost, on));
+		}
+	    }   
+	
+	}
+
+	//if no path was found excpetion is thrown
+    throw new NoSuchElementException("No path was found from " + start + " to " + end);
     }
 
     /**
@@ -95,10 +134,28 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
      * @return list of data item from node along this shortest path
      */
     public List<NodeType> shortestPathData(NodeType start, NodeType end) {
-        // implement in step 5.4
-        return null;
-	}
+        List<NodeType> shortPath = new ArrayList<>();
 
+	try{
+	    //computes the shortestPath
+	    SearchNode on = computeShortestPath(start, end);
+
+	    //gives teh path in reverse so it has it from start to end
+	    LinkedList<NodeType> list = new LinkedList<>();
+	    while(on != null){
+		//puts the node into the stack
+		list.push(on.node.data);
+		on = on.predecessor;
+	    }
+	    shortPath.addAll(list);
+	}catch (NoSuchElementException e){
+	    //if there is no path then an empty list will be returned
+	    return new ArrayList<>();
+	}
+	
+        return shortPath;
+	
+    }
     /**
      * Returns the cost of the path (sum over edge weights) of the shortest
      * path freom the node containing the start data to the node containing the
@@ -110,15 +167,22 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
      * @return the cost of the shortest path between these nodes
      */
     public double shortestPathCost(NodeType start, NodeType end) {
-        // implement in step 5.4
-        return Double.NaN;
+	try{
+	    //computes the shortest path and gives the cost
+	    SearchNode sum = computeShortestPath(start,end);
+	    return sum.cost;
+	}catch(NoSuchElementException e){
+	    //thrown if no path exists
+	    throw new NoSuchElementException("No path found");
+	}
+
     }
 
-    // TODO: implement 3+ tests in step 4.1
+    
 
     //Tests that the graph prints the correct things
     @Test
-    public void testGraphResults(){
+    public void test1(){
 	DijkstraGraph<String, Integer> graph = new DijkstraGraph<String,Integer>();
 
 	//adds the nodes
@@ -158,20 +222,19 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
 	List<String> paths = graph.shortestPathData("D", "I");
 	List<String> expected = new ArrayList<>();
 
-	expected.add("F");
+	expected.add("D");
         expected.add("G");
-        expected.add("A");
-        expected.add("B");
-        expected.add("M");
+        expected.add("H");
         expected.add("I");
 
+	//checks if the expected equals the given output
 	Assertions.assertEquals(expected,paths);
-	Assertions.assertEquals(14, graph.shortestPathCost("D", "I"));
+	Assertions.assertEquals(13, graph.shortestPathCost("D", "I"));
     }
 
     //tests the different costs and paths
     @Test
-    public void testGraphDifferentResults(){
+    public void test2(){
 	 DijkstraGraph<String, Integer> graph = new DijkstraGraph<String,Integer>();
 
         //adds the nodes                                                                                     
@@ -215,15 +278,16 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
 	expected.add("A");
         expected.add("B");
         expected.add("M");
-        expected.add("I");
+        expected.add("E");
 
+	//checks that the expected matches the actual output
         Assertions.assertEquals(expected,paths);
         Assertions.assertEquals(20, graph.shortestPathCost("F", "E"));
     }
 
     //tests when there is no path
     @Test
-    public void testsNoPath(){
+    public void test3(){
 	 DijkstraGraph<String, Integer> graph = new DijkstraGraph<String,Integer>();
 
         //adds the nodes                                                                                    
