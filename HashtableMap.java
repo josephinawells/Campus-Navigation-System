@@ -6,7 +6,8 @@ import java.util.LinkedList;
 
 public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueType> {
   protected LinkedList<Pair>[] table = null;
-  
+   private int size;
+    
   protected class Pair {
 
     public KeyType key;
@@ -20,7 +21,8 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
 
   @SuppressWarnings("unchecked")
   public HashtableMap(int capacity) {
-    table = (LinkedList<Pair>[]) new LinkedList[capacity];
+      table = (LinkedList<Pair>[]) new LinkedList[capacity];
+      size = 0;
   }
     
   public HashtableMap(){// with default capacity = 64
@@ -35,8 +37,35 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
    * @throws NullPointerException if key is null
    */
   @Override
-  public void put(Object key, Object value) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
+  public void put(KeyType key, ValueType value) throws IllegalArgumentException {
+  //if the key is null then excpetion is thrown
+    if (key == null) {
+      throw new NullPointerException("Key can't be null");
+    }
+
+    //index is calculated using hash code
+    int index = Math.abs(key.hashCode()) % table.length;
+
+    //if the table is empty then a new LinkedList is created
+    if (table[index] == null) {
+      table[index] = new LinkedList<>();
+    }
+    
+    //goes through the table and if the key is already found in the table exception is thrown
+    for (Pair pair : table[index]) {
+      if (pair.key.equals(key)) {
+        throw new IllegalArgumentException("Key is already in the table");
+      }
+    }
+
+    //key is added to the table
+    table[index].add(new Pair(key, value));
+    size++;
+
+    //table capacity doubled if load factor is greater or equal to 80%
+    if ((double) size / table.length >= 0.8) {
+      resize();
+    }
     
   }
   
@@ -48,7 +77,21 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
    */
   @Override
   public boolean containsKey(Object key) {
-    // TODO Auto-generated method stub
+    //index calculated using hash code
+    int index = Math.abs(key.hashCode()) % table.length;
+    //finds the bucket at the index
+    LinkedList<Pair> bucket = table[index];
+    
+    if (bucket != null) {
+      //goes through the bucket and finds wehre the keys match
+      for (int i = 0; i < bucket.size(); i++) {
+        if (bucket.get(i).key.equals(key)) {
+          //if the key is found return true
+          return true;
+        }
+      }
+    }
+    //if key isn't found return false
     return false;
   }
   
@@ -61,8 +104,21 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
    */
   @Override
   public ValueType get(Object key) throws NoSuchElementException {
-    // TODO Auto-generated method stub
-    return null;
+ //calculates index
+    int index = Math.abs(key.hashCode()) % table.length;
+    LinkedList<Pair> bucket = table[index];
+    if (bucket != null) {
+      //goes through the list in the bucket to find the wanted key
+      for (int i = 0; i < bucket.size(); i++) {
+        Pair pair = bucket.get(i);
+        //when found return that key's value
+        if (pair.key.equals(key)) {
+          return pair.value;
+        }
+      }
+    }
+    //if not found then exception is thrown
+    throw new NoSuchElementException("key does not exist in collection");
   }
   
   /**
@@ -74,8 +130,24 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
    */
   @Override
   public ValueType remove(Object key) throws NoSuchElementException {
-    // TODO Auto-generated method stub
-    return null;
+     //calculate index
+    int index = Math.abs(key.hashCode()) % table.length;
+    LinkedList<Pair> bucket = table[index];
+    if (bucket != null) {
+      //go through the bucket
+      for (int i = 0; i < bucket.size(); i++) {
+        Pair pair = bucket.get(i);
+        if (pair.key.equals(key)) {
+          //gets the value type of what we want to remove
+          ValueType value = pair.value;
+          bucket.remove(i);
+          size--;
+          return value;
+        }
+      }
+    }
+    //if key not found then exception thrown
+    throw new NoSuchElementException("key does not exist in collection");
   }
   
   /**
@@ -83,8 +155,12 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
    */
   @Override
   public void clear() {
-    // TODO Auto-generated method stub
-    
+     for (int i = 0; i < table.length; i++) {
+      if (table[i] != null) {
+        table[i] = null;
+      }
+    }
+    size = 0;
   }
   
   /**
@@ -93,8 +169,7 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
    */
   @Override
   public int getSize() {
-    // TODO Auto-generated method stub
-    return 0;
+      return size;
   }
   
   /**
@@ -103,8 +178,30 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
    */
   @Override
   public int getCapacity() {
-    // TODO Auto-generated method stub
-    return 0;
+     return table.length;
+  }
+
+    /**
+   * Dynamically grows the hashtable by doubling its capacity and rehashing, whenever its load
+   * factor becomes greater than or equal to 80%.
+   */
+  @SuppressWarnings("unchecked")
+  private void resize() {
+    //stores the old table
+    LinkedList<Pair>[] pastTable = table;
+    //doubles the capacity of the table
+    table = (LinkedList<Pair>[]) new LinkedList[pastTable.length * 2];
+    size = 0;
+
+    //rehash everything that was in the table
+    for (LinkedList<Pair> bucket : pastTable) {
+      if (bucket != null) {
+        for (Pair pair : bucket) {
+          //reinserts what was already there
+          put(pair.key, pair.value);
+        }
+      }
+    }
   }
 
     
@@ -156,7 +253,7 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
     map.put("cat", 3);
 
     // making sure what is removed is dog
-    assertEquals("dog", map.remove("dog"));
+    assertEquals(2, map.remove("dog"));
     // checks that the dog key isn't there
     assertFalse(map.containsKey("dog"));
     // checks that the size has decreased by one
@@ -197,7 +294,7 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
     map.put("cat", 3);
    
     //tests it gives the correct value with the key
-    assertEquals(1, map.get("golfish"));
+    assertEquals(1, map.get("goldfish"));
     
     //tests the exception is thrown when a key doens't exist
     assertThrows(NoSuchElementException.class, () -> {
