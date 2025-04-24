@@ -74,7 +74,8 @@ public class Frontend implements FrontendInterface{
      *         two locations
      */
     @Override
-    public String generateShortestPathResponseHTML(String start, String end){
+    public String generateShortestPathResponseHTML(String start, String end) throws NoSuchElementException{
+	try{
 	//Lists that hold the location and time from the shortest path called from the backend
 	List<String> location = backend.findLocationsOnShortestPath(start,end);
 	List<Double> time = backend.findTimesOnShortestPath(start,end);
@@ -94,6 +95,9 @@ public class Frontend implements FrontendInterface{
 	//gives the user the shortest path and the time traveled it took to get from start to end
 	return "<p>Shortest path from " + start + " to " + end + "</p>" + path +
 	    "<p> Total travel time: " + totalTime + " seconds.</p>";
+	}catch(NoSuchElementException e){
+	    throw new NoSuchElementException("The start or end was not found in the graph");
+	}
     }
 
     /**
@@ -139,6 +143,10 @@ public class Frontend implements FrontendInterface{
 	if(path.isEmpty()){
 	    return "<p>No valid path found from " + start + " to furthest destination</p>";
         }
+
+	if(furthestDestination == null || furthestDestination.isEmpty()){
+	    return "<p>No destinations reachable from " + start;
+	}
 
 	//creates an ordered list for the path from the furthest destination
 	String paths = generateString(path);
