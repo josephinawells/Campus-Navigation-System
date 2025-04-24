@@ -24,9 +24,9 @@ public class FrontendTests{
 
 	//makes sure the String contains the correct output
 	assertTrue(actualHTML.contains("<label for ='start'>Start Location:</label>"));
-	assertTrue(actualHTML.contains("<input type = 'text' id = 'start' name = 'start'>"));
-        assertTrue(actualHTML.contains("<label for = 'end'> End location:</label>"));
-	assertTrue(actualHTML.contains("<input type = 'text' id = 'end' name = 'end'>"));
+	assertTrue(actualHTML.contains("<input type = 'text' id ='start' name = 'start'>"));
+        assertTrue(actualHTML.contains("<label for ='end'> End location:</label>"));
+	assertTrue(actualHTML.contains("<input type = 'text' id ='end' name = 'end'>"));
 	assertTrue(actualHTML.contains("<button type = 'submit'>Find shortest path</button>"));
     }
 

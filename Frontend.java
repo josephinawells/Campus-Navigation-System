@@ -37,12 +37,27 @@ public class Frontend implements FrontendInterface{
 	//returns a prompt for the user to get the shortest path
 	return "<form>"+
 	   "<label for ='start'>Start Location:</label>"+
-	    "<input type = 'text' id = 'start' name = 'start'>"+
-	    "<label for = 'end'> End location:</label>"+
-	    "<input type = 'text' id = 'end' name = 'end'>"+
+	    "<input type = 'text' id ='start' name = 'start'>"+
+	    "<label for ='end'> End location:</label>"+
+	    "<input type = 'text' id ='end' name = 'end'>"+
 	    "<button type = 'submit'>Find shortest path</button>"+
 	   " </form>";			  
-    }    
+    }
+
+    /**
+       Private helper method that helps the organization and efficiany of the code
+     **/
+    private String generateString(List<String> items){
+	StringBuilder stringHtml = new StringBuilder("<ol>");
+
+	for(String string : items){
+	    stringHtml.append("<li>").append(items).append("</li>");
+	}
+
+	stringHtml.append("</ol>");
+
+	return stringHtml.toString();
+    }
     
     /**
      * Returns an HTML fragment that can be embedded within the body of a
@@ -68,15 +83,9 @@ public class Frontend implements FrontendInterface{
 	}
 
 	//creates an ordered list to store the locations in the shortest path
-	String path = "<ol>";
+	String path = generateString(loco);
 
-	for(String location : loco){
-	    //adds each location as a list item
-	    path += ("<li>" + location + "</li>");
-	}
-	path += "</ol>";
-
-	double totalTime = 0;
+     	double totalTime = 0;
 	for(double times: time){
 	    totalTime += times;
 	}
@@ -126,18 +135,13 @@ public class Frontend implements FrontendInterface{
 	List<String> path = backend.findLocationsOnShortestPath(start, furthestDestination);
 
 	if(path.isEmpty()){
-		return "<p>No valid path found from " + start + " to furthest destination</p>";
+	    return "<p>No valid path found from " + start + " to furthest destination</p>";
         }
 
 	//creates an ordered list for the path from the furthest destination
-	   String paths = "<ol>";
-	    for(String location : path){
-		//adds the location to the list
-		paths += "<li>" + location + "</li>";
-	    }
-	    paths += "</ol>";
+	String paths = generateString(path);
 
-	    return "<p>Starting from: " + start + "</p>" +
+	return "<p>Starting from: " + start + "</p>" +
             "<p>Furthest reachable destination: " + furthestDestination + "</p>" +  paths;
     }
  
