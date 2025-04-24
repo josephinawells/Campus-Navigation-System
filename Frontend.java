@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 public class Frontend implements FrontendInterface{
     /**
        This class is the Frontend of the project and loads the user information on the screen on how to load 
@@ -75,15 +76,15 @@ public class Frontend implements FrontendInterface{
     @Override
     public String generateShortestPathResponseHTML(String start, String end){
 	//Lists that hold the location and time from the shortest path called from the backend
-	List<String> loco = backend.findLocationsOnShortestPath(start,end);
+	List<String> location = backend.findLocationsOnShortestPath(start,end);
 	List<Double> time = backend.findTimesOnShortestPath(start,end);
 
-	if(loco.isEmpty()){
+	if(location.isEmpty()){
 	    return "<p>No path found between " + start + " and " + end + ". Please check the locations and try again.</p>";
 	}
 
 	//creates an ordered list to store the locations in the shortest path
-	String path = generateString(loco);
+	String path = generateString(location);
 
      	double totalTime = 0;
 	for(double times: time){
@@ -129,6 +130,7 @@ public class Frontend implements FrontendInterface{
      */
     @Override
     public String generateFurthestDestinationFromResponseHTML(String start){
+	try{
 	//creates a String of furthest Destination from the backend
 	//along with the locations on the shortest path from the backend
 	String furthestDestination = backend.getFurthestDestinationFrom(start);
@@ -143,6 +145,10 @@ public class Frontend implements FrontendInterface{
 
 	return "<p>Starting from: " + start + "</p>" +
             "<p>Furthest reachable destination: " + furthestDestination + "</p>" +  paths;
+	}catch(NoSuchElementException e){
+	    throw new NoSuchElementException("Start location does not exist");
+	}
     }
+	
  
 }
