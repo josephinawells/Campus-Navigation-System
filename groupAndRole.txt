@@ -1,2 +1,6 @@
 You have been assigned to group P2.1506 for Project 2.
+
 Your assigned role for this project is: frontend developer
+
+Your assigned role for this project is: backend developer
+

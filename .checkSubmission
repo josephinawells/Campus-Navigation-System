@@ -48,6 +48,7 @@ fi
 echo
 
 
+
 if [[ ! -f groupAndRole.txt ]]; then
   echo "Warning Submission Incomplete: submission does not contain groupAndRole.txt, which should not have been deleted."
   exit 1
@@ -86,7 +87,6 @@ if [[ ! -f "${ROLE}Tests.java" ]]; then
   echo "Warning Submission Incomplete: submission does not contain ${ROLE}Tests.java file, but this is where your tests should be implemented"
   exit 1
 fi
-
 
 echo "Submission Passed Basic Scan"
 exit 0
