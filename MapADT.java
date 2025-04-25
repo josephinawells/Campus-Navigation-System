@@ -9,6 +9,7 @@ public interface MapADT<KeyType, ValueType> {
 
     /**
      * Adds a new key,value pair/mapping to this collection.
+     * Adds a new key,value pair/mapping to this collection.It is ok that the value is null.
      * @param key the key of the key,value pair
      * @param value the value that key maps to
      * @throws IllegalArgumentException if key already maps to a value
@@ -64,6 +65,10 @@ public interface MapADT<KeyType, ValueType> {
      * @return a list of keys in the underlying array for this collection
      */
     public List<KeyType> getKeys();
+
+
+
+    public int getCapacity();
 
 }
 

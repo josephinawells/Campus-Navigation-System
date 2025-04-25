@@ -59,7 +59,7 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
      * Constructor that sets the map that the graph uses.
      */
     public DijkstraGraph() {
-        super(new PlaceholderMap<>());
+        super(new HashtableMap<>());
     }
 
     /**
@@ -83,7 +83,7 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
 	    throw new NoSuchElementException("Start or End no was not found");
 	}
 	PriorityQueue<SearchNode> queue = new PriorityQueue<>();
-	PlaceholderMap<Node, Node> seen = new PlaceholderMap<>();
+	HashtableMap<Node, Node> seen = new HashtableMap<>();
 
 	Node startingNode = this.nodes.get(start);
 	Node endingNode = this.nodes.get(end);
