@@ -176,14 +176,15 @@ public class Backend implements BackendInterface {
 	}
 
 	List<String> allNodes = graph.getAllNodes();
-	String furthest = null;
-	double maxDistance = Double.MIN_VALUE;
+	String furthest = null; // stores intialy furthest node
+	double maxDistance = Double.MIN_VALUE; //any distance will be larger
 
+	// iterate through all nodes to find furthest one
 	for (int i = 0; i < allNodes.size(); i++) {
 	    String destination = allNodes.get(i);
 	    // skip starting location
 	    if (destination.equals(startLocation)) {
-		continue;
+		continue; 
 	    }
 	    try {
 		double distance = graph.shortestPathCost(startLocation, destination);
@@ -193,6 +194,7 @@ public class Backend implements BackendInterface {
 		}
 	    } catch (NoSuchElementException e) {
 		// if a destination cannot be reached, then skip it an carry on
+		// this happens when nodes are disconnected from the start node
 	    }
 	}
 
