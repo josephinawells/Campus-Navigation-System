@@ -31,10 +31,10 @@ public class Backend implements BackendInterface {
     public void loadGraphData(String filename) throws IOException {
 	// remove all nodes first to clear graph
 	List<String> originalNodes = new ArrayList<>(graph.getAllNodes());
-	for (int i = 0; i < originalNodes.size(); i++) {
-	    graph.removeNode(originalNodes.get(i));
+	for (String node : originalNodes) {
+	    graph.removeNode(node);
 	}
-
+	
 	BufferedReader reader = null;
 	
 	try {
