@@ -65,8 +65,11 @@ public class Backend implements BackendInterface {
 		String pointB = line.substring(q3Index + 1, q4Index);
 
 		// find weights
-		int secondsStartIndex = line.indexOf("[seconds=") + 9;
+		int secondsStartIndex = line.indexOf("[seconds=", q4Index + 1) + 9;
 		int secondsEndIndex = line.indexOf("]", secondsStartIndex);
+
+		//int secondsStartIndex = line.indexOf("[seconds=") + 9;
+		//int secondsEndIndex = line.indexOf("]", secondsStartIndex);
 		if (secondsStartIndex == -1 || secondsEndIndex == -1) {
 		    continue;  // skip erors
 		}
