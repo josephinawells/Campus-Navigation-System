@@ -65,10 +65,5 @@ public interface MapADT<KeyType, ValueType> {
      * @return a list of keys in the underlying array for this collection
      */
     public List<KeyType> getKeys();
-
-
-
-    public int getCapacity();
-
 }
 

@@ -2,7 +2,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import java.util.LinkedList;
+import java.util.List;
+
 
 public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueType> {
   protected LinkedList<Pair>[] table = null;
@@ -203,6 +204,23 @@ public class HashtableMap<KeyType, ValueType> implements MapADT<KeyType, ValueTy
       }
     }
   }
+
+     /**                                                                                                         
+     * Retrieves this collection's keys.                                                                         
+     * @return a list of keys in the underlying array for this collection                                        
+     */
+    @Override
+    public List<KeyType> getKeys(){
+	List<KeyType> keys = new LinkedList<>();
+	for(int i = 0; i < table.length; i++){
+	    if(table[i] != null){
+		for(Pair pair : table[i]){
+		    keys.add(pair.key);
+		}
+	    }
+	}
+	return keys;
+    }
 
     
   /**
