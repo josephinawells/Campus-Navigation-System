@@ -31,10 +31,10 @@ public class Backend implements BackendInterface {
     public void loadGraphData(String filename) throws IOException {
 	// remove all nodes first to clear graph
 	List<String> originalNodes = new ArrayList<>(graph.getAllNodes());
-	for (int i = 0; i < originalNodes.size(); i++) {
-	    graph.removeNode(originalNodes.get(i));
+	for (String node : originalNodes) {
+	    graph.removeNode(node);
 	}
-
+	
 	BufferedReader reader = null;
 	
 	try {
@@ -65,8 +65,11 @@ public class Backend implements BackendInterface {
 		String pointB = line.substring(q3Index + 1, q4Index);
 
 		// find weights
-		int secondsStartIndex = line.indexOf("[seconds=") + 9;
+		int secondsStartIndex = line.indexOf("[seconds=", q4Index + 1) + 9;
 		int secondsEndIndex = line.indexOf("]", secondsStartIndex);
+
+		//int secondsStartIndex = line.indexOf("[seconds=") + 9;
+		//int secondsEndIndex = line.indexOf("]", secondsStartIndex);
 		if (secondsStartIndex == -1 || secondsEndIndex == -1) {
 		    continue;  // skip erors
 		}
@@ -176,14 +179,15 @@ public class Backend implements BackendInterface {
 	}
 
 	List<String> allNodes = graph.getAllNodes();
-	String furthest = null;
-	double maxDistance = Double.MIN_VALUE;
+	String furthest = null; // stores intialy furthest node
+	double maxDistance = Double.MIN_VALUE; //any distance will be larger
 
+	// iterate through all nodes to find furthest one
 	for (int i = 0; i < allNodes.size(); i++) {
 	    String destination = allNodes.get(i);
 	    // skip starting location
 	    if (destination.equals(startLocation)) {
-		continue;
+		continue; 
 	    }
 	    try {
 		double distance = graph.shortestPathCost(startLocation, destination);
@@ -193,6 +197,7 @@ public class Backend implements BackendInterface {
 		}
 	    } catch (NoSuchElementException e) {
 		// if a destination cannot be reached, then skip it an carry on
+		// this happens when nodes are disconnected from the start node
 	    }
 	}
 
