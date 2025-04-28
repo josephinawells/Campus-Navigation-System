@@ -106,6 +106,7 @@ fi
 if ! java -jar ../junit5.jar --class-path=. --select-class=P210SubmissionChecker; then
 	echo
 	echo "Submission Failed Check: one or more JUnit tests failed; if you have submitted (pushed) 3 or more JUnit test methods then your submission is complete for the mid-week deadline"
+fi
 
 if ! java -jar ../junit5.jar --class-path=. --select-class=P212SubmissionChecker; then
 	echo
