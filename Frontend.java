@@ -50,7 +50,7 @@ public class Frontend implements FrontendInterface{
      **/
     private String generateString(List<String> items){
 	StringBuilder stringHtml = new StringBuilder("<ol>");
-	stringHTML.append("<ol>");
+	stringHtml.append("<ol>");
 	for(String string : items){
 	    stringHtml.append("<li>").append(string).append("</li>");
 	}

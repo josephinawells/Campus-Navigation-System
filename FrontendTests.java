@@ -14,6 +14,7 @@ public class FrontendTests{
        This tests the genereateShortestPathPromptHTML() method from the frontend class and makes sure the expected
        output is given
      **/
+
     @Test
     public void roleTest1(){
 	//creates a backend and frontend object
@@ -194,14 +195,13 @@ public class FrontendTests{
         Frontend frontend = new Frontend(backend);
 
 	//the two locations we want
-	String start = "Memorial Union";
-	
+	String start = "Memorial Union";	
 	try{
+	    //gets the backend information 
 	    String location = backend.getFurthestDestinationFrom(start);	    
-	    assertEquals("Wisconsin State Historical Society", location, "Wisconsin Historical Expected as the furthest"); 
+	    assertEquals("Smith Residence Hall", location, "Smith Residence Hall Expected as the furthest"); 
 	}catch(NoSuchElementException e){
 		fail("Start location does not exist in graph");
 	    }
-    } 	    	
-      
+    }   
 }
