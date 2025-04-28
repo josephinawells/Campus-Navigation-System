@@ -107,7 +107,8 @@ public class FrontendTests{
 
     /**
        This is testsing the getListOfALlLocations() method is the backend in checking that there is an output given by the backend method
-     **/
+       and makes sure the shortest path prompt works as expected
+**/
     @Test
     public void IntegrationTest1(){
 	//creates the two objects
@@ -116,7 +117,9 @@ public class FrontendTests{
 
 	//the List of locations
 	List<String> locations = backend.getListOfAllLocations();
-
+	String actualHTML = frontend.generateShortestPathPromptHTML();
+        assertTrue(actualHTML.contains("<label for ='start'>Start Location:</label>"));
+        assertTrue(actualHTML.contains("<input type = 'text' id ='start' name = 'start'>"));
 	//checks that there are locations in the list and that is not empty
 	assertNotNull(locations);
 	assertFalse(locations.isEmpty(), "Graph should not be empty");
@@ -161,7 +164,7 @@ public class FrontendTests{
      **/
     @Test
     public void IntegrationTest3(){
-	//creates teh objects
+	//creates the objects
 	Backend backend = new Backend(new DijkstraGraph<>());
         Frontend frontend = new Frontend(backend);
 
@@ -178,15 +181,17 @@ public class FrontendTests{
 	    //should not be thrown as the location does exist
 	    fail("Start location does not exist in the graph");
 	}
-
-	//should be thrown as this location does not exist
-        assertThrows(NoSuchElementException.class, () -> {
-		frontend.generateFurthestDestinationFromResponseHTML("Nolocation");
-	    },"Should throw error as this location does not exist");
+        try{
+            //gets the backend information                                                                                                                             
+            String location = backend.getFurthestDestinationFrom(start);
+            assertEquals("Smith Residence Hall", location, "Smith Residence Hall Expected as the furthest");
+        }catch(NoSuchElementException e){
+                fail("Start location does not exist in graph");
+            }
     }
 
     /**
-       Checks that the getFurthestDestinationFrom Method is working as expected
+       Checks that the getFurthestDestinationFrom Method and generateFurthestDestinationFromResponseHTML throw expected errors 
      **/
     @Test
     public void IntegrationTest4(){
@@ -194,14 +199,14 @@ public class FrontendTests{
 	Backend backend = new Backend(new DijkstraGraph<>());
         Frontend frontend = new Frontend(backend);
 
-	//the two locations we want
-	String start = "Memorial Union";	
-	try{
-	    //gets the backend information 
-	    String location = backend.getFurthestDestinationFrom(start);	    
-	    assertEquals("Smith Residence Hall", location, "Smith Residence Hall Expected as the furthest"); 
-	}catch(NoSuchElementException e){
-		fail("Start location does not exist in graph");
-	    }
-    }   
+	 //should be thrown as this location does not exist                                                                                                           
+        assertThrows(NoSuchElementException.class, () -> {
+                frontend.generateFurthestDestinationFromResponseHTML("Nolocation");
+            },"Should throw error as this location does not exist");   
+
+	assertThrows(NoSuchElementException.class, () -> {
+		backend.getFurthestDestinationFrom("nonExistentLocation");
+	    }, "Error should be thrown as this doesn't exist");
+    
+    }
 }
